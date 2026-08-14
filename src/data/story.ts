@@ -1,0 +1,113 @@
+import type { StoryChapter } from "@/types/portfolio";
+
+// The seven-chapter scroll story. Content is Arteja's real narrative arc,
+// written to be accurate: education is "pursuing", projects reference only
+// already-supplied information, no employers/clients/celebrities are named.
+// Copy is intentionally balanced — ~90–120 words of primary story per chapter.
+export const storyChapters: StoryChapter[] = [
+  {
+    id: "beginning",
+    index: "01",
+    era: "HIGH SCHOOL",
+    headline: "COVID changed the world. I started building mine.",
+    body: [
+      "During high school and the COVID era, I started developing websites. While so much of life was suddenly moving online, I got fascinated by something most people weren't asking: who was actually building all of this?",
+      "I didn't want to only use the internet. I wanted to understand what was happening behind the screen — how ideas became interfaces, how a button actually did something, how a blank file could turn into something another person could use.",
+      "So I started learning. Then I started building.",
+      "Somewhere between the curiosity and a ridiculous number of browser tabs, technology stopped feeling like something I consumed and started feeling like something I could create.",
+    ],
+    punch: "Curiosity opened the first tab. I still haven't closed it.",
+    scene: "browser-assembles",
+    accent: "violet",
+  },
+  {
+    id: "911",
+    index: "02",
+    era: "911",
+    headline: "Then life got very real.",
+    body: [
+      "I became an emergency 911 first responder, where staying calm, listening carefully, and making decisions under pressure weren't just skills — they could directly affect someone's day.",
+      "At the same time, I was studying cybersecurity and full stack development. Two completely different worlds kept teaching me the same lesson: understand the situation, find what matters, protect what you can, solve the problem, and don't panic when something breaks.",
+      "911 taught me to find clarity in chaos. Cybersecurity taught me to look for what isn't obvious. Development taught me that complex systems get manageable once you see how the pieces connect.",
+      "Responsibility. Communication. Critical thinking. Decisions that matter. Resilience.",
+    ],
+    punch: "Different systems. Same instinct: understand what matters and figure out what happens next.",
+    scene: "dispatch",
+    accent: "emerald",
+  },
+  {
+    id: "engineering",
+    index: "03",
+    era: "ENGINEERING",
+    headline: "I kept learning.",
+    body: [
+      "The deeper I went, the more I realized I didn't want to understand just one layer of technology.",
+      "Frontend led me to backend. Backend led me to databases. Databases made security impossible to ignore. Then came cloud, architecture, AI, and infrastructure — each answer handing me the next question.",
+      "I'm pursuing my bachelor's degree in Software Engineering and plan to continue into graduate-level study at WGU, because for me learning was never about collecting a title. I want to understand how the whole system connects.",
+      "Full stack wasn't the destination. It was the doorway.",
+    ],
+    punch: "Full stack was never the ceiling. It was the on-ramp.",
+    scene: "stacking",
+    accent: "blue",
+  },
+  {
+    id: "shipping",
+    index: "04",
+    era: "SHIPPING",
+    headline: "Learning turned into building.",
+    body: [
+      "Learning has a way of turning into building. Once I understood how the pieces fit, I wanted to make things people could actually open and use.",
+      "That became websites, web applications, business and organizational platforms, community technology, and international projects — including celebrity-related website work.",
+      "None of it was theoretical anymore. Real people, real deadlines, and the occasional why-is-this-breaking-at-midnight — the kind of pressure that turns learning into instinct and teaches you fast.",
+      "One project became five. Five started to feel like an ecosystem, and I realized building for other people is a very different craft than building to learn.",
+    ],
+    punch: "git log: real projects shipped. Verified names and links land in the Build section.",
+    scene: "shipping",
+    accent: "cyan",
+  },
+  {
+    id: "teaching",
+    index: "05",
+    era: "TEACHING",
+    headline: "Then I started teaching other people.",
+    body: [
+      "Eventually, knowing how to build wasn't enough. I wanted to find out if I could make technology make sense to someone else.",
+      "I've taught Full Stack Development to beginners, kids learning technology, career changers, and people trying to break into tech for the first time.",
+      "I teach frontend, backend, APIs, databases, and modern software the way I wish complicated things were always explained: start with the human, then explain the technology.",
+      "Because knowledge becomes a lot more powerful the moment somebody else can use it too.",
+    ],
+    punch: "Knowledge should travel.",
+    scene: "classroom",
+    accent: "orange",
+  },
+  {
+    id: "ai",
+    index: "06",
+    era: "AI",
+    headline: "And then the internet changed again.",
+    body: [
+      "Artificial intelligence felt like another one of those moments when technology opened a door nobody could completely see through yet.",
+      "Instead of fearing that evolution, I wanted to understand it.",
+      "My work with AI reaches past just using models. I care about how it's analyzed, implemented, governed, secured, and used responsibly — and how we can use it to expand what people create instead of replacing the curiosity that made us create in the first place.",
+      "Technology is going to keep evolving. I plan to evolve with it.",
+    ],
+    punch: "Don't fear the evolution. Learn how to build with it.",
+    scene: "neural",
+    accent: "pink",
+  },
+  {
+    id: "now",
+    index: "07",
+    era: "NOW",
+    headline: "Everything converges.",
+    body: [
+      "Today, the pieces that once looked completely separate don't feel separate anymore.",
+      "Code. Security. Leadership. Teaching. AI. Community. Global work.",
+      "The calm I learned in emergency response shows up when systems break. The curiosity that started with a few websites still opens new tabs. Teaching keeps reminding me that technology only matters when people can actually use it. AI keeps handing me new questions to chase.",
+      "I'm not interested in choosing between engineer, educator, technologist, leader, or community builder. I'm interested in what happens when all of them work together.",
+    ],
+    punch: "This isn't where I ended up. This is where I'm starting from. (Still building.)",
+    scene: "converge",
+    accent: "violet",
+  },
+];
