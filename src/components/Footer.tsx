@@ -3,6 +3,8 @@ import { profile, socialLinks } from "@/data/profile";
 import { routeCards } from "@/data/navigation";
 import { RunItBack } from "@/components/RunItBack";
 
+const footerSocialLinks = socialLinks.filter((s) => !["GitHub", "LinkedIn"].includes(s.label));
+
 // Ending credits of a film.
 export function Footer() {
   return (
@@ -30,7 +32,7 @@ export function Footer() {
             ))}
           </nav>
           <div className="footer__links">
-            {socialLinks.map((s) => (
+            {footerSocialLinks.map((s) => (
               <a
                 key={s.label}
                 href={s.href}

@@ -284,7 +284,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.04em; margin: 0; }
   margin: 0 auto 1.15rem;
 }
 .rail__track { position: relative; flex: 1; display: flex; }
-.rail__line { position: absolute; left: 1.3rem; top: 0.2rem; bottom: 0.2rem; width: 1px; background: linear-gradient(180deg, transparent, var(--line-strong), transparent); overflow: hidden; }
+.rail__line { position: absolute; left: 1.3rem; top: 0.2rem; bottom: 0.2rem; width: 1px; background: linear-gradient(180deg, transparent, var(--line-strong), transparent); overflow: hidden; pointer-events: none; }
 .rail__line::before { content: ""; position: absolute; left: -3px; top: 0; width: 7px; height: 100%; background: repeating-linear-gradient(180deg, transparent 0 22px, rgba(141,92,255,0.28) 22px 23px, transparent 23px 34px); }
 .rail__line-fill { position: absolute; left: 0; top: 0; width: 100%; background: linear-gradient(180deg, var(--accent-emerald), var(--accent-violet)); transform-origin: top; box-shadow: 0 0 18px rgba(46,229,157,0.5); }
 .rail__nodes { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 0.5rem 0 0.25rem; }
@@ -686,6 +686,11 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.04em; margin: 0; }
 .net__edge { stroke: var(--line-strong); stroke-width: 0.4; transition: stroke 240ms ease, stroke-width 240ms ease; }
 .net__edge.is-lit { stroke: var(--accent-violet); stroke-width: 0.7; }
 .net__label { font-family: var(--font-mono); font-size: 3px; fill: var(--soft); letter-spacing: 0.04em; }
+/* Kill the default focus/tap outline rectangle (the "blue/cyan pill") around the
+   focusable node group. Keyboard focus is shown by a small circular SVG ring
+   rendered inside the group instead, so accessibility is preserved. */
+.net__node { outline: none; -webkit-tap-highlight-color: transparent; }
+.net__node:focus, .net__node:focus-visible, .net__node:active { outline: none; }
 .net__center-label { font-family: var(--font-mono); font-size: 4.4px; font-weight: 800; fill: var(--pearl); }
 
 .world { display: grid; gap: 2rem; grid-template-columns: 1fr; align-items: center; }
@@ -740,13 +745,26 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.04em; margin: 0; }
 .cmd__head { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); }
 .cmd__head i { width: 0.65rem; height: 0.65rem; border-radius: 999px; display: inline-block; }
 .cmd__head span { margin-left: auto; font-size: 0.66rem; color: var(--muted); letter-spacing: 0.12em; }
-.cmd__out { padding: 0.9rem 1rem; display: grid; gap: 0.3rem; max-height: 42vh; overflow: auto; font-size: 0.82rem; }
+.cmd__out { padding: 0.9rem 1rem; display: grid; gap: 0.3rem; max-height: 42vh; overflow-y: auto; overscroll-behavior: contain; font-size: 0.82rem; }
 .cmd__out .out-line { color: var(--soft); white-space: pre-wrap; }
 .cmd__out .out-line b { color: var(--accent-emerald); font-weight: 500; }
 .cmd__out .out-echo { color: var(--accent-violet); }
 .cmd__inrow { display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1rem; border-top: 1px solid var(--line); }
 .cmd__inrow span { color: var(--accent-emerald); }
 .cmd__inrow input { flex: 1; background: transparent; border: 0; outline: 0; color: var(--pearl); font-family: var(--font-mono); }
+/* clickable try: examples row (runs the same terminal engine) */
+.cmd__try { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem 0.7rem; border-top: 1px dashed var(--line); }
+.cmd__try-lead { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); }
+.cmd__try-btn { font-family: var(--font-mono); font-size: 0.68rem; color: var(--soft); border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.02); cursor: pointer; transition: border-color 150ms ease, color 150ms ease, background 150ms ease; }
+.cmd__try-btn:hover { color: var(--pearl); border-color: var(--accent-violet); background: color-mix(in srgb, var(--accent-violet) 15%, transparent); }
+.cmd__try-btn:focus-visible { border-color: var(--accent-emerald); }
+/* hero terminal "this is real" microcopy */
+.cmd-embed__label { font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.4; margin: 0 0 0.5rem; }
+.cmd-embed__real { color: var(--accent-emerald); font-weight: 600; letter-spacing: 0.01em; }
+.cmd-embed__arrow { display: inline-block; margin-left: 0.35rem; color: var(--accent-emerald); animation: arrow-nudge 1.8s ease-in-out infinite; }
+.cmd-embed__hint { display: block; color: var(--muted); font-size: 0.68rem; margin-top: 0.2rem; }
+.cmd-embed__hint code { color: var(--soft); }
+@keyframes arrow-nudge { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, 2px); } }
 
 /* ===========================================================================
    EASTER EGGS — bug + error toast + konami flash
@@ -764,7 +782,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.04em; margin: 0; }
    FOOTER + 404
    =========================================================================== */
 .footer { background: var(--black); border-top: 1px solid var(--line); padding: clamp(3rem, 8vw, 6rem) 0 3rem; position: relative; }
-.footer__big { font-size: clamp(3rem, 15vw, 12rem); line-height: 0.85; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1px var(--line-strong); }
+.footer__big { font-size: clamp(3rem, 15vw, 12rem); line-height: 0.85; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1px var(--accent-emerald); }
 .footer__credits { font-family: var(--font-mono); font-size: clamp(1.2rem, 3vw, 2rem); letter-spacing: -0.02em; margin-top: 1.5rem; }
 .footer__credits b { color: var(--accent-violet); font-weight: 500; }
 .footer__meta { display: flex; flex-wrap: wrap; gap: 1.4rem; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
@@ -920,8 +938,10 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.04em; margin: 0; }
 /* ===========================================================================
    BOOKWORM EASTER EGG (Edit 3/13) — z 42: above content, below bug/terminal/nav
    =========================================================================== */
-.bookworm { position: fixed; z-index: 42; width: 32px; height: 32px; display: grid; place-items: center; font-size: 1.15rem; background: none; border: 0; filter: drop-shadow(0 0 7px rgba(182,255,61,0.55)); }
-.bookworm__ach { position: fixed; left: 50%; bottom: 1.4rem; transform: translateX(-50%); z-index: 46; display: grid; gap: 0.15rem; justify-items: center; text-align: center; border: 1px solid var(--accent-lime); border-radius: 12px; background: rgba(12,18,6,0.94); backdrop-filter: blur(6px); padding: 0.7rem 1.1rem; font-family: var(--font-mono); max-width: min(360px, calc(100vw - 2rem)); }
+/* z 39: above page content, but BELOW the side rail (40) so it can never block
+   navigation clicks. */
+.bookworm { position: fixed; z-index: 39; width: 32px; height: 32px; display: grid; place-items: center; font-size: 1.15rem; background: none; border: 0; filter: drop-shadow(0 0 7px rgba(182,255,61,0.55)); }
+.bookworm__ach { position: fixed; left: 50%; bottom: 1.4rem; transform: translateX(-50%); z-index: 46; pointer-events: none; display: grid; gap: 0.15rem; justify-items: center; text-align: center; border: 1px solid var(--accent-lime); border-radius: 12px; background: rgba(12,18,6,0.94); backdrop-filter: blur(6px); padding: 0.7rem 1.1rem; font-family: var(--font-mono); max-width: min(360px, calc(100vw - 2rem)); }
 .bookworm__ach b { color: var(--accent-lime); font-size: 0.86rem; letter-spacing: 0.02em; }
 .bookworm__ach span { color: var(--soft); font-size: 0.72rem; }
 .bookworm__ach-badge { color: var(--accent-yellow); }

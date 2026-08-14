@@ -34,7 +34,5 @@ export const profile = {
 } as const;
 
 export const socialLinks: { label: string; href: string; isPlaceholder?: boolean }[] = [
-  { label: "GitHub", href: "#", isPlaceholder: true },
-  { label: "LinkedIn", href: "#", isPlaceholder: true },
   { label: "Email", href: "mailto:hello@artejastacks.com", isPlaceholder: true },
 ];

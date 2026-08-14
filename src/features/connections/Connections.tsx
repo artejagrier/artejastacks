@@ -16,6 +16,7 @@ export function Connections() {
   const reduce = useReducedMotion();
   const [hovered, setHovered] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
+  const [focused, setFocused] = useState<string | null>(null);
 
   const current = connectionNodes.find((n) => n.id === selected) ?? null;
 
@@ -84,11 +85,18 @@ export function Connections() {
               return (
                 <g
                   key={n.id}
+                  className="net__node"
                   style={{ cursor: "pointer", opacity: dim ? 0.4 : 1, transition: "opacity 200ms ease" }}
                   onMouseEnter={() => setHovered(n.id)}
                   onMouseLeave={() => setHovered(null)}
-                  onFocus={() => setHovered(n.id)}
-                  onBlur={() => setHovered(null)}
+                  onFocus={() => {
+                    setHovered(n.id);
+                    setFocused(n.id);
+                  }}
+                  onBlur={() => {
+                    setHovered(null);
+                    setFocused(null);
+                  }}
                   onClick={() => selectNode(n.id)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
@@ -105,6 +113,11 @@ export function Connections() {
                       No pulsing blob/pop-up over the node. */}
                   {isSelected && (
                     <circle cx={n.x} cy={n.y} r="3.4" fill="none" stroke={color} strokeWidth="0.35" opacity="0.95" />
+                  )}
+                  {/* small CIRCULAR keyboard-focus ring (replaces the default
+                      focus rectangle, which is removed via CSS). Never a pill. */}
+                  {focused === n.id && !isSelected && (
+                    <circle cx={n.x} cy={n.y} r="3.4" fill="none" stroke={color} strokeWidth="0.4" strokeDasharray="1.2 1" opacity="0.9" />
                   )}
                   <circle
                     cx={n.x}

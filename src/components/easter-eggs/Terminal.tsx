@@ -116,6 +116,7 @@ function TerminalWindow({
   outRef,
   inputRef,
   autoFocus,
+  examples,
 }: {
   head: string;
   lines: Line[];
@@ -125,6 +126,7 @@ function TerminalWindow({
   outRef: React.RefObject<HTMLDivElement | null>;
   inputRef?: React.RefObject<HTMLInputElement | null>;
   autoFocus?: boolean;
+  examples?: string[];
 }) {
   return (
     <div className="cmd">
@@ -153,23 +155,51 @@ function TerminalWindow({
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="try: whoami · git status · sudo hire arteja · work · ai"
+          placeholder="type a command…"
           aria-label="Terminal input"
           autoComplete="off"
           spellCheck={false}
           autoFocus={autoFocus}
         />
       </form>
+      {examples && examples.length > 0 && (
+        <div className="cmd__try" aria-label="Example commands — click to run">
+          <span className="cmd__try-lead">try:</span>
+          {examples.map((ex) => (
+            <button key={ex} type="button" className="cmd__try-btn" onClick={() => run(ex)}>
+              {ex}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
+// A few real commands surfaced as clickable examples (they run the same engine).
+const tryExamples = ["whoami", "git status", "sudo hire arteja", "work", "ai"];
 
 // The always-open embedded terminal used in the hero. Same engine + data.
 export function TerminalEmbedded() {
   const { lines, input, setInput, run, outRef } = useTerminal(heroSeed);
   return (
     <div className="cmd--embed" aria-label="ArtejaStacks hero terminal">
-      <TerminalWindow head="arteja@stacks — live" lines={lines} input={input} setInput={setInput} run={run} outRef={outRef} />
+      <p className="cmd-embed__label">
+        <span className="cmd-embed__real">THIS TERMINAL IS REAL. GO AHEAD, BREAK SOMETHING.</span>
+        <span className="cmd-embed__arrow" aria-hidden="true">↘</span>
+        <span className="cmd-embed__hint">
+          Yes, it actually works. Type a command or steal one of the <code>try:</code> examples below.
+        </span>
+      </p>
+      <TerminalWindow
+        head="arteja@stacks — live"
+        lines={lines}
+        input={input}
+        setInput={setInput}
+        run={run}
+        outRef={outRef}
+        examples={tryExamples}
+      />
     </div>
   );
 }
@@ -217,6 +247,7 @@ export function Terminal() {
               run={run}
               outRef={outRef}
               inputRef={inputRef}
+              examples={tryExamples}
             />
           </div>
         </div>
