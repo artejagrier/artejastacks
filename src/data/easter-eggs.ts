@@ -13,7 +13,7 @@ export const terminalResponses: Record<string, string[]> = {
   ls: ["story/  build/  ai/  teach/  impact/  world/  ideas/  coffee.log"],
   "cat coffee.log": ["ERROR: coffee.log is empty. This explains a lot."],
   help: [
-    "try: whoami · pwd · git status · ls · sudo hire arteja · konami",
+    "try: whoami · pwd · git status · ls · home · back · clear · sudo hire arteja · konami",
     "or just type something and see what happens.",
   ],
   konami: ["↑ ↑ ↓ ↓ ← → ← → B A — you already know the code. Try it on the page."],

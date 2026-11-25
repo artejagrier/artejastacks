@@ -8,6 +8,7 @@ import { onOpenTerminal } from "./terminalBus";
 import { scrollToSection } from "@/components/navigation/useSectionObserver";
 
 type Line = { kind: "echo" | "out" | "hot"; text: string };
+type NavTarget = { id: string; label: string };
 
 const banner: Line[] = [
   { kind: "out", text: "ARTEJA//STACKS terminal — type `help`. (this is a toy. mostly.)" },
@@ -28,11 +29,17 @@ const heroSeed: Line[] = [
   { kind: "hot", text: "everything to build." },
 ];
 
-// Build a nav lookup: section labels + route labels/paths → action.
-const navMap: Record<string, { label: string; go: () => void }> = {};
+// Build a nav lookup: section labels + ids → the same targets the side rail uses.
+const navMap: Record<string, NavTarget> = {};
 for (const s of sectionNodes) {
-  navMap[s.label.toLowerCase()] = { label: s.label, go: () => scrollToSection(s.id) };
-  navMap[s.id.toLowerCase()] = { label: s.label, go: () => scrollToSection(s.id) };
+  navMap[s.label.toLowerCase()] = { id: s.id, label: s.label };
+  navMap[s.id.toLowerCase()] = { id: s.id, label: s.label };
+}
+
+function releaseTerminalControl() {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
 }
 
 // Shared terminal engine — one implementation, used by both the floating
@@ -43,6 +50,8 @@ function useTerminal(initial: Line[], onNavigate?: () => void) {
   const [lines, setLines] = useState<Line[]>(initial);
   const [input, setInput] = useState("");
   const outRef = useRef<HTMLDivElement>(null);
+  const currentTarget = useRef<string | null>(null);
+  const previousTarget = useRef<string | null>(null);
 
   useEffect(() => {
     if (outRef.current) outRef.current.scrollTop = outRef.current.scrollHeight;
@@ -55,6 +64,36 @@ function useTerminal(initial: Line[], onNavigate?: () => void) {
       const lower = cmd.toLowerCase();
       const next: Line[] = [{ kind: "echo", text: `➜ ${cmd}` }];
 
+      const navigateToSection = (target: NavTarget, delay = 350) => {
+        window.setTimeout(() => {
+          if (currentTarget.current && currentTarget.current !== target.id) {
+            previousTarget.current = currentTarget.current;
+          }
+          currentTarget.current = target.id;
+          releaseTerminalControl();
+          onNavigate?.();
+          window.requestAnimationFrame(() => {
+            const didScroll = scrollToSection(target.id, { focusTarget: true });
+            if (!didScroll && target.id === "contact") router.push("/contact");
+          });
+        }, delay);
+      };
+
+      if (lower === "back") {
+        const targetId = previousTarget.current ?? "home";
+        const target = sectionNodes.find((s) => s.id === targetId) ?? sectionNodes[0];
+        next.push({
+          kind: "hot",
+          text: previousTarget.current
+            ? `returning to ${target.label.toLowerCase()}…`
+            : "no terminal history yet — returning home…",
+        });
+        setLines((l) => [...l, ...next]);
+        setInput("");
+        navigateToSection({ id: target.id, label: target.label });
+        return;
+      }
+
       const known = terminalResponses[lower];
       if (known) {
         if (known[0] === "__CLEAR__") {
@@ -66,10 +105,7 @@ function useTerminal(initial: Line[], onNavigate?: () => void) {
         setLines((l) => [...l, ...next]);
         setInput("");
         if (lower === "sudo hire arteja") {
-          window.setTimeout(() => {
-            onNavigate?.();
-            router.push("/contact");
-          }, 900);
+          navigateToSection({ id: "contact", label: "PING" }, 900);
         }
         return;
       }
@@ -79,10 +115,7 @@ function useTerminal(initial: Line[], onNavigate?: () => void) {
         next.push({ kind: "hot", text: `opening ${nav.label.toLowerCase()}…` });
         setLines((l) => [...l, ...next]);
         setInput("");
-        window.setTimeout(() => {
-          onNavigate?.();
-          nav.go();
-        }, 350);
+        navigateToSection(nav);
         return;
       }
       const route = routeCards.find((r) => lower === r.label.toLowerCase() || lower === r.href.replace("/", ""));
@@ -91,6 +124,7 @@ function useTerminal(initial: Line[], onNavigate?: () => void) {
         setLines((l) => [...l, ...next]);
         setInput("");
         window.setTimeout(() => {
+          releaseTerminalControl();
           onNavigate?.();
           router.push(route.href);
         }, 350);
@@ -208,19 +242,28 @@ export function TerminalEmbedded() {
 export function Terminal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { lines, input, setInput, run, outRef } = useTerminal(banner, () => setOpen(false));
+  const closeTerminal = useCallback(() => {
+    inputRef.current?.blur();
+    releaseTerminalControl();
+    setOpen(false);
+  }, []);
+  const { lines, input, setInput, run, outRef } = useTerminal(banner, closeTerminal);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setOpen((v) => !v);
+        if (open) {
+          closeTerminal();
+        } else {
+          setOpen(true);
+        }
       }
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") closeTerminal();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [closeTerminal, open]);
 
   useEffect(() => onOpenTerminal(() => setOpen(true)), []);
 
@@ -237,7 +280,7 @@ export function Terminal() {
       </button>
 
       {open && (
-        <div className="cmd-scrim" role="dialog" aria-modal="true" aria-label="ArtejaStacks terminal" onClick={() => setOpen(false)}>
+        <div className="cmd-scrim" role="dialog" aria-modal="true" aria-label="ArtejaStacks terminal" onClick={closeTerminal}>
           <div onClick={(e) => e.stopPropagation()}>
             <TerminalWindow
               head="arteja@stacks — ⌘K"

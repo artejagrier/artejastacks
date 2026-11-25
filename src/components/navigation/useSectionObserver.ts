@@ -52,9 +52,20 @@ export function useSectionObserver(ids: string[]) {
   return { active, activeIndex, progress };
 }
 
-export function scrollToSection(id: string) {
+export function scrollToSection(id: string, { focusTarget = false }: { focusTarget?: boolean } = {}) {
   const el = document.getElementById(id);
-  if (!el) return;
+  if (!el) return false;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  if (focusTarget) {
+    const hadTabIndex = el.hasAttribute("tabindex");
+    if (!hadTabIndex) el.setAttribute("tabindex", "-1");
+    window.setTimeout(() => {
+      el.focus({ preventScroll: true });
+      if (!hadTabIndex) {
+        el.addEventListener("blur", () => el.removeAttribute("tabindex"), { once: true });
+      }
+    }, reduce ? 0 : 450);
+  }
+  return true;
 }
